@@ -1,30 +1,23 @@
 const puppeteer = require("puppeteer-extra")
 const StealthPlugin = require("puppeteer-extra-plugin-stealth")
-const prompt = require("prompt-sync")()
+
 puppeteer.use(StealthPlugin())
 
-function getProductIDFromURL(productLink) {
-    const productIDIndex = productLink.lastIndexOf("-")
-    const productID = productLink.substring(productIDIndex + 1)
-    console.log(productID)
-    return productID
-}
+const PRODUCT_LINK = "https://www.target.com/p/playstation-5-console-slim/-/A-90188801"
 
-async function addToCart(page, productLink) {
-    let productID = getProductIDFromURL(productLink)
+async function addToCart(page) {
     console.log("Waiting for button to load...")
-    const addToCartButton = await page.waitForSelector(`button[id='addToCartButtonOrTextIdFor${productID}']`)
+    const addToCartButton = await page.waitForSelector("button[id='addToCartButtonOrTextIdFor90188801']")
     console.log("Button loaded!")
     await addToCartButton.click()
-    console.log("Added to cart!")
+    console.log("Button clicked!")
 }
 
 async function run() {
     const browser = await puppeteer.launch({headless: false})
     const page = await browser.newPage()
-    let productLink = prompt("Enter the product URL: ")
-    await page.goto(productLink)
-    await addToCart(page, productLink)
+    await page.goto(PRODUCT_LINK)
+    await addToCart(page)
 }
 
 run()
